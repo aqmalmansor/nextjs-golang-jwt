@@ -1,3 +1,5 @@
+"use client";
+
 import { AuthGuard } from "@/components/core";
 import { useSession, signOut } from "next-auth/react";
 
