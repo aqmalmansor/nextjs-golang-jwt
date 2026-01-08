@@ -1,6 +1,5 @@
 import ky from "ky";
-import { getToken } from "next-auth/jwt";
-import type { NextRequest } from "next/server";
+import { Session } from "next-auth";
 
 import { ENV, KY_CONFIG } from "../constants";
 
@@ -8,6 +7,8 @@ export interface BaseApiAttributes {
   path: string;
   body?: unknown;
   headers?: Record<string, string>;
+  token?: string;
+  session?: Session;
 }
 
 export type BaseApiMethods =
@@ -32,19 +33,6 @@ export const ApiClient = ky.create({
   hooks: {
     beforeRequest: [
       async (request) => {
-        try {
-          const token = await getToken({
-            req: request as NextRequest,
-            secret: ENV.JWT_SECRET,
-          });
-
-          if (token?.accessToken) {
-            request.headers.set("Authorization", `Bearer ${token.accessToken}`);
-          }
-        } catch {
-          // Silently continue for public routes - no token needed
-        }
-
         if (
           !request.headers.has("Content-Type") &&
           request.method !== "GET" &&
@@ -71,13 +59,15 @@ const BaseApiClient = (): {
   ) => Promise<T>;
 } => {
   const buildOptions = (attrs: BaseApiAttributes): RequestInit => {
-    const { body, headers } = attrs;
-    const options: RequestInit = {
-      headers: {
-        "app-id": "frontend",
-        ...headers,
-      },
-    };
+    const { body, headers, session } = attrs;
+
+    const finalHeaders = { ...headers };
+
+    if (session) {
+      finalHeaders.Authorization = `Bearer ${session.accessToken}`;
+    }
+
+    const options: RequestInit = { headers: finalHeaders };
 
     if (body) {
       options.body = JSON.stringify(body);
@@ -89,27 +79,35 @@ const BaseApiClient = (): {
   return {
     get: async <T>(attrs: BaseApiAttributes) => {
       const url = attrs.path;
-      const response = await ApiClient.get<T>(url, buildOptions(attrs));
+      const response = await ApiClient.get<T>(url, buildOptions(attrs))
+        .then((res) => res.json())
+        .catch((e) => e);
 
-      return response as T;
+      return response;
     },
     post: async <T>(attrs: BaseApiAttributes) => {
       const url = attrs.path;
-      const response = await ApiClient.post<T>(url, buildOptions(attrs));
+      const response = await ApiClient.post(url, buildOptions(attrs))
+        .then((res) => res.json())
+        .catch((e) => e);
 
-      return response as T;
+      return response as Promise<T>;
     },
     patch: async <T>(attrs: BaseApiAttributes) => {
       const url = attrs.path;
-      const response = await ApiClient.patch<T>(url, buildOptions(attrs));
+      const response = await ApiClient.patch<T>(url, buildOptions(attrs))
+        .then((res) => res.json())
+        .catch((e) => e);
 
-      return response as T;
+      return response as Promise<T>;
     },
     delete: async <T>(attrs: BaseApiAttributes) => {
       const url = attrs.path;
-      const response = await ApiClient.delete<T>(url, buildOptions(attrs));
+      const response = await ApiClient.delete<T>(url, buildOptions(attrs))
+        .then((res) => res.json())
+        .catch((e) => e);
 
-      return response as T;
+      return response as Promise<T>;
     },
     all: async <T>() => Promise.resolve() as Promise<T>,
     head: async <T>() => Promise.resolve() as Promise<T>,

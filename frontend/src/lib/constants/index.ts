@@ -4,7 +4,21 @@ export const ENV = {
   JWT_SECRET: process.env.JWT_SECRET!,
 };
 
+export const DEBUG_ENABLED = process.env.NODE_ENV !== "production";
+
 export const KY_CONFIG = {
   TIMEOUT: 30_000,
   RETRIES: 2,
+};
+
+export const CATCH_ERROR = {
+  COMMON: "Something went wrong!",
+};
+
+export const ERROR_NAME = {
+  REFRESH_ACCESS_TOKEN: "RefreshAccessTokenError",
+};
+
+export const URL_QUERY_KEY = {
+  FROM: "from",
 };
