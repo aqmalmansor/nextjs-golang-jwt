@@ -63,7 +63,7 @@ export const authOptions = {
         if (!authResult) return null;
 
         const user = {
-          id: authResult.user?.id?.toString() || crypto.randomUUID(),
+          id: authResult.user?.id,
           name: authResult.user?.name,
           email: authResult.user?.email,
           role: authResult.user?.role,
@@ -81,10 +81,9 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user: User }) {
       if (user) {
-        DEBUG.JWT_INITIAL_TOKEN(token);
+        DEBUG.JWT_INITIAL_TOKEN(token, user);
         const newToken = {
           ...token,
-          id: user.id,
           role: user.role,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,

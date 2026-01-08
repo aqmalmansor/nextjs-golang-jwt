@@ -1,11 +1,13 @@
+import { User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
 import { DEBUG_ENABLED } from "../constants";
 
 export const DEBUG = {
-  JWT_INITIAL_TOKEN: (token: JWT) => {
+  JWT_INITIAL_TOKEN: (token: JWT, user: User) => {
     if (DEBUG_ENABLED) {
       console.log("JWT callback - Initial token", token);
+      console.log("JWT callback - Initial user", user);
     }
   },
   JWT_MASSAGED_TOKEN: (token: JWT) => {
@@ -15,7 +17,7 @@ export const DEBUG = {
   },
   JWT_CHECK_TOKEN: (token: JWT) => {
     if (DEBUG_ENABLED) {
-      console.log("JWT callback - token check:", {
+      console.log("JWT callback - Check Token", {
         hasRefreshToken: !!token.refreshToken,
         accessTokenExpires: token.accessTokenExpires,
         currentTime: Date.now(),
