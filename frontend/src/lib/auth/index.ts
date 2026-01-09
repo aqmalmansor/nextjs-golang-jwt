@@ -85,6 +85,8 @@ export const authOptions = {
         const newToken = {
           ...token,
           role: user.role,
+          email: user.email,
+          name: user.name,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
           accessTokenExpires: user.accessTokenExpires,
