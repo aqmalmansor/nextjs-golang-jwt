@@ -56,7 +56,6 @@ export default function SignUpPage() {
             For testing auth system
           </p>
         </div>
-
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div className="mb-4">
@@ -85,7 +84,6 @@ export default function SignUpPage() {
                 </button>
               </div>
             </div>
-
             <div className="mb-4">
               <label
                 htmlFor="password"
@@ -103,7 +101,6 @@ export default function SignUpPage() {
               />
             </div>
           </div>
-
           {message && (
             <div
               className={`p-3 rounded-md text-sm ${
@@ -115,7 +112,6 @@ export default function SignUpPage() {
               {message}
             </div>
           )}
-
           <div>
             <button
               type="submit"
@@ -125,7 +121,6 @@ export default function SignUpPage() {
               {isLoading ? "Processing..." : "Test Sign Up"}
             </button>
           </div>
-
           <div className="text-center">
             <div className="text-xs text-gray-500 space-y-1">
               <div>Fixed Password: TestPassword123!</div>
