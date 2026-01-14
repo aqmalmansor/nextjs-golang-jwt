@@ -36,7 +36,7 @@ export default function SignUpPage() {
         name: `Aqmal Mansor ${Math.random()}`,
       });
 
-      router.push("/sign-in");
+      router.push(`/sign-in?email=${encodeURIComponent(testEmail)}`);
     } catch (e) {
       console.log(e);
       setMessage("An error occurred during sign up");

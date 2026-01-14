@@ -2,10 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("aqmal.mansor+dev-362096@ayp-group.com");
+  const searchParams = useSearchParams();
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("TestPassword123!");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
