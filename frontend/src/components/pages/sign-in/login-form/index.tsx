@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("aqmal.mansor+dev-153972@ayp-group.com");
+  const [email, setEmail] = useState("aqmal.mansor+dev-362096@ayp-group.com");
   const [password, setPassword] = useState("TestPassword123!");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,6 @@ export function LoginForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     const result = await signIn("credentials", {
       email,
@@ -47,7 +46,6 @@ export function LoginForm() {
             className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
           />
         </div>
-
         <div>
           <label className="block text-sm font-medium text-gray-900">
             Password
@@ -61,9 +59,7 @@ export function LoginForm() {
             className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
           />
         </div>
-
         {error && <div className="text-red-600 text-sm">{error}</div>}
-
         <button
           type="submit"
           disabled={loading}

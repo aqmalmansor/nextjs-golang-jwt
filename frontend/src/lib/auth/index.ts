@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { AuthApi } from "@/services/auth-api";
 
-import { ENV, ERROR_NAME } from "../constants";
+import { A_DAY, ENV, ERROR_NAME } from "../constants";
 import { DEBUG } from "./config";
 
 async function refreshAccessToken(token: JWT) {
@@ -91,7 +91,7 @@ export const authOptions = {
           refreshToken: user.refreshToken,
           accessTokenExpires: user.accessTokenExpires,
         };
-        DEBUG.JWT_MASSAGED_TOKEN(token);
+        DEBUG.JWT_MASSAGED_TOKEN(newToken);
         return newToken;
       }
 
@@ -117,7 +117,7 @@ export const authOptions = {
   secret: ENV.JWT_SECRET,
   session: {
     strategy: "jwt" as const,
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * A_DAY,
   },
 };
 
