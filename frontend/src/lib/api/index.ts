@@ -1,6 +1,5 @@
 import ky from "ky";
-import { getToken } from "next-auth/jwt";
-import type { NextRequest } from "next/server";
+import { Session } from "next-auth";
 
 import { ENV, KY_CONFIG } from "../constants";
 
@@ -8,6 +7,8 @@ export interface BaseApiAttributes {
   path: string;
   body?: unknown;
   headers?: Record<string, string>;
+  token?: string;
+  session?: Session;
 }
 
 export type BaseApiMethods =
@@ -32,19 +33,6 @@ export const ApiClient = ky.create({
   hooks: {
     beforeRequest: [
       async (request) => {
-        try {
-          const token = await getToken({
-            req: request as NextRequest,
-            secret: ENV.JWT_SECRET,
-          });
-
-          if (token?.accessToken) {
-            request.headers.set("Authorization", `Bearer ${token.accessToken}`);
-          }
-        } catch {
-          // Silently continue for public routes - no token needed
-        }
-
         if (
           !request.headers.has("Content-Type") &&
           request.method !== "GET" &&
@@ -57,7 +45,7 @@ export const ApiClient = ky.create({
     afterResponse: [
       async (_request, _options, response) => {
         if (response.status === 401) {
-          window.location.href = "/sign-in";
+          if (window) window.location.href = "/sign-in";
         }
         return response;
       },
@@ -70,13 +58,18 @@ const BaseApiClient = (): {
     baseApiAttributes: BaseApiAttributes
   ) => Promise<T>;
 } => {
-  const buildOptions = (attrs: BaseApiAttributes): RequestInit => {
-    const { body, headers } = attrs;
-    const options: RequestInit = {
-      headers: {
-        "app-id": "frontend",
-        ...headers,
-      },
+  const buildOptions = (attrs: BaseApiAttributes) => {
+    const { body, headers, session } = attrs;
+
+    const finalHeaders = { ...headers };
+
+    if (session) {
+      finalHeaders.Authorization = `Bearer ${session.accessToken}`;
+    }
+
+    const options: Record<string, unknown> = {
+      headers: finalHeaders,
+      throwHttpErrors: false,
     };
 
     if (body) {
@@ -87,29 +80,43 @@ const BaseApiClient = (): {
   };
 
   return {
-    get: async <T>(attrs: BaseApiAttributes) => {
-      const url = attrs.path;
-      const response = await ApiClient.get<T>(url, buildOptions(attrs));
+    get: async <T>(attrs: BaseApiAttributes): Promise<T> => {
+      const response = await ApiClient.get<T>(attrs.path, buildOptions(attrs));
 
-      return response as T;
+      const data = (await response.json()) as T;
+
+      if (!response.ok) throw data;
+      return data;
     },
-    post: async <T>(attrs: BaseApiAttributes) => {
-      const url = attrs.path;
-      const response = await ApiClient.post<T>(url, buildOptions(attrs));
+    post: async <T>(attrs: BaseApiAttributes): Promise<T> => {
+      const response = await ApiClient.post(attrs.path, buildOptions(attrs));
+      const data = (await response.json()) as T;
 
-      return response as T;
+      if (!response.ok) throw data;
+
+      return data;
     },
-    patch: async <T>(attrs: BaseApiAttributes) => {
-      const url = attrs.path;
-      const response = await ApiClient.patch<T>(url, buildOptions(attrs));
+    patch: async <T>(attrs: BaseApiAttributes): Promise<T> => {
+      const response = await ApiClient.patch<T>(
+        attrs.path,
+        buildOptions(attrs)
+      );
+      const data = (await response.json()) as T;
 
-      return response as T;
+      if (!response.ok) throw data;
+
+      return data;
     },
-    delete: async <T>(attrs: BaseApiAttributes) => {
-      const url = attrs.path;
-      const response = await ApiClient.delete<T>(url, buildOptions(attrs));
+    delete: async <T>(attrs: BaseApiAttributes): Promise<T> => {
+      const response = await ApiClient.delete<T>(
+        attrs.path,
+        buildOptions(attrs)
+      );
+      const data = (await response.json()) as T;
 
-      return response as T;
+      if (!response.ok) throw data;
+
+      return data;
     },
     all: async <T>() => Promise.resolve() as Promise<T>,
     head: async <T>() => Promise.resolve() as Promise<T>,

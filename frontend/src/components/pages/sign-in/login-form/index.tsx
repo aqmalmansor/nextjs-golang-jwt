@@ -2,11 +2,12 @@
 
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const searchParams = useSearchParams();
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
+  const [password, setPassword] = useState("TestPassword123!");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -14,7 +15,6 @@ export function LoginForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     const result = await signIn("credentials", {
       email,
@@ -35,7 +35,7 @@ export function LoginForm() {
     <div className="max-w-md mx-auto mt-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-900">
             Email
           </label>
           <input
@@ -44,12 +44,11 @@ export function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             required
             disabled={loading}
-            className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"
+            className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
           />
         </div>
-
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-900">
             Password
           </label>
           <input
@@ -58,12 +57,10 @@ export function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             required
             disabled={loading}
-            className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"
+            className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900"
           />
         </div>
-
         {error && <div className="text-red-600 text-sm">{error}</div>}
-
         <button
           type="submit"
           disabled={loading}
