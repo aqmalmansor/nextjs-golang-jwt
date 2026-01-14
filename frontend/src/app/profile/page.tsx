@@ -12,6 +12,7 @@ export default async function Page() {
   return (
     <div>
       <pre>{JSON.stringify(user, null, 2)}</pre>
+      <pre>{JSON.stringify(session, null, 2)}</pre>
     </div>
   );
 }
