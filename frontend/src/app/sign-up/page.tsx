@@ -14,7 +14,7 @@ export default function SignUpPage() {
     const randomNumber = Math.floor(Math.random() * 1000000)
       .toString()
       .padStart(6, "0");
-    return `aqmal.mansor+dev-${randomNumber}@ayp-group.com`;
+    return `dev-${randomNumber}@xyz.com`;
   };
 
   const handleGenerateEmail = () => {
