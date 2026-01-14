@@ -1,7 +1,7 @@
 package config
 
 import (
-	"ecommerce-be/utils"
+	"be/utils"
 	"time"
 )
 

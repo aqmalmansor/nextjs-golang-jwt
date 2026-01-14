@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 
-	"ecommerce-be/models"
+	"be/models"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

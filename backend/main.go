@@ -4,9 +4,9 @@ import (
 	"log"
 	"strconv"
 
-	"ecommerce-be/config"
-	"ecommerce-be/handlers"
-	"ecommerce-be/middleware"
+	"be/config"
+	"be/handlers"
+	"be/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -64,7 +64,7 @@ func main() {
 			c.JSON(200, gin.H{
 				"status":   "ok",
 				"database": "connected",
-				"service":  "ecommerce-be",
+				"service":  "be",
 			})
 		})
 

@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"ecommerce-be/config"
-	"ecommerce-be/enums"
-	"ecommerce-be/models"
+	"be/config"
+	"be/enums"
+	"be/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"

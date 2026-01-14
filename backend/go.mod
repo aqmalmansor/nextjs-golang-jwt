@@ -1,4 +1,4 @@
-module ecommerce-be
+module be
 
 go 1.25.3
 

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"ecommerce-be/config"
+	"be/config"
 	"net/http"
 	"strings"
 
